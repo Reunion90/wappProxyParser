@@ -1,0 +1,36 @@
+
+// Fonts
+@import url("https://fonts.googleapis.com/css?family=Raleway:300,400,600");
+
+// Variables
+@import "variables";
+
+// Bootstrap
+@import "~bootstrap-sass/assets/stylesheets/bootstrap";
+
+.tab-pane {
+	padding-top: 20px;
+}
+.btn {
+	margin-left: 10px;
+}
+.notification-wrapper {
+	position: absolute;
+	right: 50px;
+	top: 50px;
+	z-index: 2000;
+}
+
+.table td, 
+.table th {
+	display: inline-block;	
+}
+.table tbody {
+  display: block;
+  overflow: auto;
+  height: 400px;
+  width: 100%;
+}
+.table tr {
+  display: block;
+}
