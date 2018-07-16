@@ -1,7 +1,7 @@
 <ul class="nav nav-tabs">
   <li class="active"><a data-toggle="tab" href="#create_process">Запустить парсер</a></li>
-  <li><a data-toggle="tab" href="#process_list">Запущенные процессы</a></li>
-  <li><a data-toggle="tab" href="#pages_list">Страницы</a></li>
+  <li><a data-toggle="tab" href="#process_list">Запущенные процессы <span id="process_list_count" class="label label-primary"></span></a></li>
+  <li><a data-toggle="tab" href="#pages_list">Страницы<span id="pages_list_count" class="label label-primary"></span></a></li>
   <li><a data-toggle="tab" href="#proxy_list">Прокси</a></li>
   <li><a data-toggle="tab" href="#settings_list">Настройки</a></li>
 </ul>
@@ -94,8 +94,8 @@
   </div>
   <div id="proxy_list" class="tab-pane">
 	<ul class="nav nav-tabs">
-	  <li class="active"><a data-toggle="tab" href="#all_proxy_list">Все</a></li>
-	  <li><a data-toggle="tab" href="#work_proxy_list">Рабочие</a></li>
+	  <li class="active"><a data-toggle="tab" href="#all_proxy_list">Все<span id="all_proxy_list_count" class="label label-primary"></span></a></li>
+	  <li><a data-toggle="tab" href="#work_proxy_list">Рабочие<span id="work_proxy_list_count" class="label label-success"></span></a></li>
 	</ul>
 	<div class="tab-content">
 		<div id="all_proxy_list" class="tab-pane in active">

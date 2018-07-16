@@ -764,23 +764,36 @@ __webpack_require__(9);
 
 $(document).ready(function () {
 	var oCallbacks = {
+		process_list_count: function process_list_count() {
+			fnCountTableRows('process_list_count', 'process_list_form');
+		},
+		pages_list_count: function pages_list_count() {
+			fnCountTableRows('pages_list_count', 'pages_list_form');
+		},
+		all_proxy_list_count: function all_proxy_list_count() {
+			fnCountTableRows('all_proxy_list_count', 'all_proxy_list_form');
+		},
+		work_proxy_list_count: function work_proxy_list_count() {
+			fnCountTableRows('work_proxy_list_count', 'work_proxy_list_form');
+		},
+
 		google_process_create_form: {
 			google_process_create_form_submit: function google_process_create_form_submit(aData) {
 				fnShowNotification(aData);
-				fnUpdateHTML('process_list', '/processes');
+				fnUpdateHTML('process_list', '/processes', oCallbacks['process_list_count']);
 			}
 		},
 		site_process_create_form: {
 			site_process_create_form_submit: function site_process_create_form_submit(aData) {
 				fnShowNotification(aData);
-				fnUpdateHTML('process_list', '/processes');
+				fnUpdateHTML('process_list', '/processes', oCallbacks['process_list_count']);
 			}
 		},
 		process_list_form: {
 			process_list_form_kill: function process_list_form_kill(aData) {
 				fnShowNotification(aData);
-				fnUpdateHTML('pages_list', '/pages');
-				fnUpdateHTML('process_list', '/processes');
+				fnUpdateHTML('pages_list', '/pages', oCallbacks['pages_list_count']);
+				fnUpdateHTML('process_list', '/processes', oCallbacks['process_list_count']);
 			}
 		},
 		all_proxy_list_form: {
@@ -803,6 +816,18 @@ $(document).ready(function () {
 		}
 	};
 
+	function fnUpdateAll() {
+		fnUpdateHTML('process_list', '/processes', oCallbacks['process_list_count']);
+		fnUpdateHTML('pages_list', '/pages', oCallbacks['pages_list_count']);
+		fnUpdateHTML('all_proxy_list', '/proxies', oCallbacks['all_proxy_list_count']);
+		fnUpdateHTML('work_proxy_list', '/proxies/work', oCallbacks['work_proxy_list_count']);
+		fnUpdateHTML('settings_list', '/settings');
+	}
+
+	function fnCountTableRows(sLabelID, sTableID) {
+		$("#" + sLabelID).text($("#" + sTableID).find("tbody tr").length);
+	}
+
 	function fnShowNotification(aResult) {
 		var sType = aResult['success'] ? 'alert-success' : 'alert-danger';
 		var sText = aResult['success'] ? 'Операция выполнена успешно' : 'Произошли ошибки';
@@ -820,10 +845,11 @@ $(document).ready(function () {
 		}, 5000);
 	}
 
-	function fnUpdateHTML(sID, sURL) {
+	function fnUpdateHTML(sID, sURL, fnSuccess) {
 		function fnUpdate(sData) {
 			$("#" + sID).html(sData);
 			fnBindForms();
+			if (fnSuccess) fnSuccess();
 		}
 
 		$.ajax(sURL, {
@@ -891,7 +917,8 @@ $(document).ready(function () {
 		});
 	}
 
-	fnBindForms();
+	fnUpdateAll();
+	//fnBindForms();
 });
 
 /***/ }),

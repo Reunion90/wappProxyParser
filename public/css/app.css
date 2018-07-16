@@ -8381,3 +8381,7 @@ button.close {
   display: block;
 }
 
+.label {
+  margin-left: 5px;
+}
+
