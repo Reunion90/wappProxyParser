@@ -28,6 +28,10 @@ Route::get('/pages', 'IndexController@fnShowPages');
 Route::get('/proxies', 'IndexController@fnShowProxies');
 Route::get('/settings', 'IndexController@fnShowSettings');
 
-Route::resources([
-
-]);	
+Route::any(
+	'{all}', 
+	function()
+	{
+		return view('errors.404');
+	}
+)->where('all', '.*');

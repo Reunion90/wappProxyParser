@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use Exception;
+
 class ProxyChecker
 {
 	protected $_sIP;
@@ -41,6 +43,10 @@ class ProxyChecker
 		$oCURL = curl_init();
 		curl_setopt_array($oCURL, $aOptions);
 		$sHTML = curl_exec($oCURL);
+
+		if (curl_errno($oCURL)>0)
+			new Exception(curl_error($oCURL));
+		
 		curl_close($oCURL);
 
 		return preg_match("/google/", $sHTML);

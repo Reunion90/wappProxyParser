@@ -24,10 +24,6 @@ class IndexController extends Controller
 	public function fnShowProcesses() {
 		Process::fnCheckAllRunningProcesses();
 		
-		if (!Process::fnIsProcessWithTypeRunning('ScanSite')) {
-			Page::truncate();
-		}
-
 		return View::make('process_list', ['oProcesses' => Process::all()]);
 	}
 
@@ -64,12 +60,24 @@ class IndexController extends Controller
 	{
 		$aResult = ['success' => true];
 
+		if ($oRequest->input('bTruncatePages', false)) {
+			Page::truncate();
+		}
+
+		$sParameters = addslashes(json_encode($oRequest->all()));
+		$aResult['success'] = Process::fnStart("php artisan sg \"$sParameters\"");
+
 		return json_encode($aResult);
 	}
 
 	public function fnCreateSiteProcess(Request $oRequest)
 	{
 		$aResult = ['success' => true];
+
+		if ($oRequest->input('bTruncatePages', false)) {
+			Page::truncate();
+		}
+
 		$sParameters = addslashes(json_encode($oRequest->all()));
 		$aResult['success'] = Process::fnStart("php artisan ss \"$sParameters\"");
 
@@ -81,7 +89,9 @@ class IndexController extends Controller
 		$aResult = ['success' => true];
 
 		foreach ($oRequest->input('bSelected', []) as $iPID => $sValue) {
-			$aResult['success'] = $aResult['success'] && Process::fnKill($iPID);
+			$bResult = Process::fnKill($iPID);
+			$aResult['result'][$iPID] = $bResult;
+			$aResult['success'] = $aResult['success'] && $bResult;
 		}
 
 		return json_encode($aResult);

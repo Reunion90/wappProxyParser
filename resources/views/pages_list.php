@@ -5,7 +5,6 @@
         </div>
         <div class="col-md-3">
           <button 
-            type="submit" 
             class="btn btn-default pull-right"
             id="pages_list_form_update"
             data-update="pages_list"

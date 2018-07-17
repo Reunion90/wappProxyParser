@@ -91,8 +91,11 @@ class CreateTables extends Migration
             }
         );
 
-        Setting::fnSet('iScanWaitTime', 'text', 2, 'Время ожидания при парсинге страниц сайта (с)');
+        Setting::fnSet('iScanLinksWaitTime', 'text', 2, 'Время ожидания при парсинге ссылок на страницах сайта (с)');
+        Setting::fnSet('iScanProxiesWaitTime', 'text', 2, 'Время ожидания при парсинге прокси на страницах сайта (с)');
+        Setting::fnSet('iScanGoogleWaitTime', 'text', 2, 'Время ожидания при парсинге страниц Google (с)');
         Setting::fnSet('iCheckProxyWaitTime', 'text', 2, 'Время ожидания при проверке прокси (с)');
+        Setting::fnSet('iLocationFinderMaxRedirects', 'text', 5, 'Количество редиректов при проверке ссылок');
         Setting::fnSet('bWriteLog', 'boolean', 1, 'Вести лог');
     }
 }

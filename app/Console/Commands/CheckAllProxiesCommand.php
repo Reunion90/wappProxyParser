@@ -20,14 +20,8 @@ class CheckAllProxiesCommand extends Command
             pcntl_signal(SIGTERM, function() {
                 CheckAllProxiesCommand::$bIsTerminated = true;
             });
-            $iPID = getmypid();
 
-            $oProcess = new Process();
-            $oProcess->iPID = $iPID;
-            $oProcess->sType = 'CheckAllProxies';
-            $oProcess->sCommand = implode(' ', $_SERVER['argv']);
-            $oProcess->sParameters = '{}';
-            $oProcess->save();
+            Process::fnCreate('CheckAllProxies');
 
             while (!self::$bIsTerminated && Proxy::fnNotChecked()>0) {
                 $oProxy = Proxy::fnNotCheckedFirst();

@@ -27,48 +27,57 @@ $(document)
 				fnCountTableRows('work_proxy_list_count', 'work_proxy_list_form');
 			},
 
-			google_process_create_form: {
-				google_process_create_form_submit: function(aData) 
-				{
-					fnShowNotification(aData);
-					fnUpdateHTML('process_list', '/processes', oCallbacks['process_list_count']);
-				},
+			process_list_form_update: function()
+			{
+				fnUpdateHTML('process_list', '/processes', oCallbacks['process_list_count']);
 			},
-			site_process_create_form: {
-				site_process_create_form_submit: function(aData) 
-				{
-					fnShowNotification(aData);
-					fnUpdateHTML('process_list', '/processes', oCallbacks['process_list_count']);
-				},
+			pages_list_form_update: function()
+			{
+				fnUpdateHTML('pages_list', '/pages', oCallbacks['pages_list_count']);
 			},
-			process_list_form: {
-				process_list_form_kill: function(aData) 
-				{
-					fnShowNotification(aData);
-					fnUpdateHTML('pages_list', '/pages', oCallbacks['pages_list_count']);
-					fnUpdateHTML('process_list', '/processes', oCallbacks['process_list_count']);
-				}
+			all_proxy_list_form_update: function()
+			{
+				fnUpdateHTML('all_proxy_list', '/proxies', oCallbacks['all_proxy_list_count']);
 			},
-			all_proxy_list_form: {
-				all_proxy_list_form_delete: function(aData) 
-				{
-					fnShowNotification(aData);
-					fnUpdateHTML('all_proxy_list', '/proxies');
-				}
+			work_proxy_list_form_update: function()
+			{
+				fnUpdateHTML('work_proxy_list', '/proxies/work', oCallbacks['work_proxy_list_count']);
 			},
-			work_proxy_list_form: {
-				work_proxy_list_form_delete: function(aData) 
-				{
-					fnShowNotification(aData);
-					fnUpdateHTML('work_proxy_list', '/proxies/work');
-				}
+
+			processes_and_pages_update: function(aData)
+			{
+				fnShowNotification(aData);
+				fnUpdateHTML('process_list', '/processes', oCallbacks['process_list_count']);
+				fnUpdateHTML('pages_list', '/pages', oCallbacks['pages_list_count']);
 			},
-			settings_list_form: {
-				settings_list_form_save: function(aData) 
-				{
-					fnShowNotification(aData);
-					fnUpdateHTML('settings_list', '/settings');
-				},
+
+			google_process_create_form_submit: function(aData) 
+			{
+				oCallbacks['processes_and_pages_update'](aData);
+			},
+			site_process_create_form_submit: function(aData) 
+			{
+				oCallbacks['processes_and_pages_update'](aData);
+			},
+			process_list_form_kill: function(aData) 
+			{
+				oCallbacks['processes_and_pages_update'](aData);
+			},
+			all_proxy_list_form_delete: function(aData) 
+			{
+				fnShowNotification(aData);
+				fnUpdateHTML('all_proxy_list', '/proxies', oCallbacks['all_proxy_list_count']);
+			},
+			work_proxy_list_form_delete: function(aData) 
+			{
+				fnShowNotification(aData);
+				fnUpdateHTML('all_proxy_list', '/proxies', oCallbacks['all_proxy_list_count']);
+				fnUpdateHTML('work_proxy_list', '/proxies/work', oCallbacks['work_proxy_list_count']);
+			},
+			settings_list_form_save: function(aData) 
+			{
+				fnShowNotification(aData);
+				fnUpdateHTML('settings_list', '/settings');
 			},
 		};
 
@@ -88,6 +97,9 @@ $(document)
 
 		function fnShowNotification(aResult)
 		{
+			if (!aResult)
+				return;
+
 			var sType = aResult['success'] ? 'alert-success' : 'alert-danger';
 			var sText = aResult['success'] ? 'Операция выполнена успешно' : 'Произошли ошибки';
 			
@@ -171,7 +183,7 @@ $(document)
 					method: $oForm.attr("method"),
 					data: aData,
 					dataType: sDataType,
-					success: oCallbacks[$oForm.attr("id")][$oSubmit.attr("id")],
+					success: oCallbacks[$oSubmit.attr("id")],
 					headers: {
     					'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
   					},
@@ -196,17 +208,10 @@ $(document)
 
 							$this = $(this);
 
-							if ($this.data("update")) {
-								fnUpdateHTML(
-									$this.data("update"),
-									$this.data("action")
-								);
-							} else {
-								fnSendFormData(
-									$oElement,
-									$this
-								);
-							}
+							fnSendFormData(
+								$oElement,
+								$this
+							);
 
 							return false;
 						});
@@ -217,6 +222,23 @@ $(document)
 							$oElement
 								.find('.selector')
 								.prop('checked', $(this).prop('checked'));
+						});
+				});
+
+			$('[data-update]:not(.binded)')
+				.each(function(iIndex, oElement)
+				{
+					var $oElement = $(oElement);
+
+					$oElement.addClass("binded");
+					$oElement
+						.click(function(oEvent) 
+						{
+							oEvent.preventDefault();
+
+							oCallbacks[$oElement.attr("id")]();
+
+							return false;
 						});
 				});
 		}

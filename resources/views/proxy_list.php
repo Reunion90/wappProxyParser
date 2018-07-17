@@ -4,7 +4,6 @@
       </div>
       <div class="col-md-3">
         <button 
-          type="submit" 
           class="btn btn-default pull-right"
           id="all_proxy_list_form_update"
           data-update="all_proxy_list"

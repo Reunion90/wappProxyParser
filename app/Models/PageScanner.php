@@ -3,13 +3,21 @@
 namespace App\Models;
 
 use DOMDocument;
+use DOMXpath;
+use Exception;
 
 class PageScanner
 {
 	protected $_sURL;
 	protected $_sHTML;
 
-	function __construct($in_sURL) 
+	function __construct($in_sURL='') 
+	{
+		if (!empty($in_sURL))
+			$this->fnGetPage($in_sURL);
+	}
+
+	public function fnGetPage($in_sURL)
 	{
 		$this->_sURL = $in_sURL;
 	
@@ -24,6 +32,13 @@ class PageScanner
 		$oCURL = curl_init();
 		curl_setopt_array($oCURL, $aOptions);
 		$this->_sHTML = curl_exec($oCURL);
+
+		if (empty($this->_sHTML))
+			echo $in_sURL, " EMPTY", "\n";
+
+		if (curl_errno($oCURL)>0)
+			new Exception(curl_error($oCURL));
+
 		curl_close($oCURL);
 	}
 
@@ -31,15 +46,52 @@ class PageScanner
 	{
 		$aResult = [];
 
-		$oDOM = new DOMDocument;
-		libxml_use_internal_errors(true);
-		$oDOM->loadHTML($this->_sHTML);
-		$oLinks = $oDOM->getElementsByTagName('a');
+		try {
+			$oDOM = new DOMDocument;
+			libxml_use_internal_errors(true);
 
-		foreach ($oLinks as $oLink) {
-			$sLink = $oLink->getAttribute('href');
-			if (!preg_match("/^[\s\t]*#/", $sLink))
-				$aResult[] = $oLink->getAttribute('href');
+			$oDOM->loadHTML($this->_sHTML);
+
+			$oLinks = $oDOM->getElementsByTagName('a');
+
+			foreach ($oLinks as $oLink) {
+				$sLink = $oLink->getAttribute('href');
+				if (!preg_match("/^[\s\t]*#/", $sLink))
+					$aResult[] = $oLink->getAttribute('href');
+			}
+		} catch (Exception $oException) {
+        	echo "fnScanForLinks ", $oException->getMessage(), "\n";
+		}
+
+		return $aResult;
+	}
+
+	public function fnScanGoogleSearchResultForLinks()
+	{
+		$aResult = ['aLinks' => [], 'sNextLink' => ''];
+
+		try {
+			$oDOM = new DOMDocument;
+			libxml_use_internal_errors(true);
+		
+			$oDOM->loadHTML($this->_sHTML);
+
+			$oDOMXPath = new DOMXpath($oDOM);
+			$oLinks = $oDOMXPath->query("//div[contains(@class, 'g')]//h3/a");
+
+			if ($oLinks->length>0) {
+				foreach ($oLinks as $oLink) {
+					$aResult['aLinks'][] = $oLink->getAttribute('href');
+				}
+			}
+
+			$oNextPageLinks = $oDOMXPath->query("//td[contains(@class, 'b')]/a");
+
+			if ($oNextPageLinks->length>0) {
+				$aResult['sNextLink'] = $oNextPageLinks[0]->getAttribute('href');
+			}
+		} catch (Exception $oException) {
+        	echo "fnScanGoogleSearchResultForLinks ", $oException->getMessage(), "\n";
 		}
 
 		return $aResult;
@@ -77,8 +129,6 @@ class PageScanner
 		foreach ($aMatches[1] as $iKey => $aMatch) {
 			$aResult[] = [$aMatches[1][$iKey], $aMatches[37][$iKey]];
 		}
-
-		//$aResult = $aMatches;
 
 		return $aResult;
 	}

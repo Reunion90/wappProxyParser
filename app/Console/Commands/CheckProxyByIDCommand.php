@@ -13,14 +13,7 @@ class CheckProxyByIDCommand extends Command
     public function handle()
     {
         try {
-            $iPID = getmypid();
-
-            $oProcess = new Process();
-            $oProcess->iPID = $iPID;
-            $oProcess->sType = 'CheckProxyByID';
-            $oProcess->sCommand = implode(' ', $_SERVER['argv']);
-            $oProcess->sParameters = '{}';
-            $oProcess->save();
+            Process::fnCreate('CheckProxyByID');
 
             if ($oProxy = Proxy::where([ 'iProxyID' => $this->argument('iProxyID') ])->first()) {
                 $oProxy->fnCheck();

@@ -8385,3 +8385,8 @@ button.close {
   margin-left: 5px;
 }
 
+.table td,
+.word_break_all {
+  word-break: break-all;
+}
+

@@ -17,6 +17,16 @@ class Process extends Model
         //'sParameters' => 'array',
     ];
 
+    public static function fnCreate($sType, $sParameters='{}')
+    {
+        $oProcess = new Process();
+        $oProcess->iPID = getmypid();
+        $oProcess->sType = $sType;
+        $oProcess->sCommand = implode(' ', $_SERVER['argv']);
+        $oProcess->sParameters = $sParameters;
+        $oProcess->save();
+    }
+
 	public static function fnIsProcessRunning($iPID)
 	{
 		$sResult = exec("ps -C $iPID");
@@ -35,7 +45,9 @@ class Process extends Model
 
 	public static function fnKill($iPID)
 	{
+		//posix_kill($iPID, SIGTERM);
 		exec("kill -9 $iPID");
+
 		$bResult = !self::fnIsProcessRunning($iPID);
 
 		if ($bResult) {
@@ -50,9 +62,9 @@ class Process extends Model
 		chdir(base_path());
 		$oHandler = popen("nohup $sCommand &", 'r');
 		$bResult = $oHandler !== false;
-		/*		
-		while (!feof($oHandler)) { 
-			echo fgets($oHandler, 4096);
+		/*
+		if (!feof($oHandler)) { 
+			echo fgets($oHandler, 4096), "\n";
 		}
 		*/
 		pclose($oHandler);

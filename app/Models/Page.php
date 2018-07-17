@@ -50,11 +50,20 @@ class Page extends Model
         foreach ($aResults as $sLink) {
         	if ($sHost) {
         		$aURL = parse_url($sLink);
+
+        		if (!isset($aURL['host']))
+        			continue;
         		if ($sHost != $aURL['host'])
         			continue;
         	}
         	self::firstOrCreate(['sURL' => $sLink]);
         }
+	}
+
+	public static function fnScanProxiesURL($sURL)
+	{
+        $oPage = self::firstOrCreate(['sURL' => $sURL]);
+		$oPage->fnScanProxies();
 	}
 
 	public function fnScanProxies() 
@@ -66,6 +75,9 @@ class Page extends Model
         $aResults = $oPageScanner->fnScanForProxies();
 
         foreach ($aResults as $aRow) {
+        	if ($aRow[1]<1 || $aRow[1]>65535)
+        		continue;
+
         	Proxy::firstOrCreate(['sIP' => $aRow[0], 'iPort' => $aRow[1]]);
     	}
 	}
