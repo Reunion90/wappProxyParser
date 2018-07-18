@@ -31,11 +31,9 @@ class ScanSiteCommand extends Command
 
             if (!empty($aParameters['sURL'])) {
                 if (!empty($aParameters['bScanFullSite'])) {
-                    $aURL = parse_url($aParameters['sURL']);
-
                     Page::fnScanLinksURL($aParameters['sURL'], $aURL['host']);
 
-                    $this->fnScanAll($aURL['host']);
+                    $this->fnScanAll();
                 } else {
                     $oPage = Page::firstOrCreate(['sURL' => $aParameters['sURL']]);
                     $oPage->fnScanProxies();
@@ -54,35 +52,11 @@ class ScanSiteCommand extends Command
 
     public function fnScanAll($sSiteHost='')
     {
-        while (!self::$bIsTerminated && Page::fnNotScanedForLinks()>0) {
-            try {
-                $oPage = Page::fnNotScanedForLinksFirst();
-                
-                if (empty($sSiteHost)) {
-                    $sSiteHost = parse_url($oPage->sURL)['host'];
-                }
-
-                $oPage->fnScanLinks($sSiteHost);
-
-                sleep(Setting::fnGet('iScanLinksWaitTime'));
-            } catch (Exception $oException) {
-                echo "fnScanAll ", $oException->getMessage(), "\n";
-            }
+        if (!Process::fnIsProcessWithTypeRunning('ScanForLinks')) {
+            Process::fnStart("php artisan sfl");
         }
-
-        while (!self::$bIsTerminated && Page::fnNotScanedForProxies()>0) {
-            try {
-                $oPage = Page::fnNotScanedForProxiesFirst();
-                $oPage->fnScanProxies();
-
-                if (!Process::fnIsProcessWithTypeRunning('CheckAllProxies')) {
-                    Process::fnStart("php artisan cap");
-                }
-
-                sleep(Setting::fnGet('iScanProxiesWaitTime'));
-            } catch (Exception $oException) {
-                echo "fnScanAll ", $oException->getMessage(), "\n";
-            }
+        if (!Process::fnIsProcessWithTypeRunning('ScanForProxies')) {
+            Process::fnStart("php artisan sfp");
         }
     }
 }

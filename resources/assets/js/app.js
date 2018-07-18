@@ -67,6 +67,7 @@ $(document)
 			{
 				fnShowNotification(aData);
 				fnUpdateHTML('all_proxy_list', '/proxies', oCallbacks['all_proxy_list_count']);
+				fnUpdateHTML('work_proxy_list', '/proxies/work', oCallbacks['work_proxy_list_count']);
 			},
 			work_proxy_list_form_delete: function(aData) 
 			{

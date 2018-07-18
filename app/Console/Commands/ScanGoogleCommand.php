@@ -53,6 +53,12 @@ class ScanGoogleCommand extends Command
 
                 sleep(Setting::fnGet('iScanGoogleWaitTime'));
             }
+
+            while (!self::$bIsTerminated && Page::fnNotScanedForProxies()>0) {
+                $this->fnCheckScanSiteProcess();
+
+                sleep(Setting::fnGet('iScanGoogleWaitTime'));
+            }
         } catch (Exception $oException) {
             $this->error($oException->getMessage());
         }

@@ -7,10 +7,10 @@ use Artisan;
 use PDO;
 use PDOException;
 
-class InstallCommand extends Command
+class DatabaseInstallCommand extends Command
 {
-    protected $description = 'Installation';
-    protected $signature = 'install';
+    protected $description = 'Database installation';
+    protected $signature = 'db:install';
 
     public function handle()
     {

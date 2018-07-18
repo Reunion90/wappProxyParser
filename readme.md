@@ -6,7 +6,7 @@
 ```
 composer install
 npm install
-php artisan install
+php artisan db:install
 npm run dev
 ```
 

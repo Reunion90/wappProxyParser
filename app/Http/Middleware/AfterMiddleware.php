@@ -9,12 +9,10 @@ class AfterMiddleware
     public function handle($oRequest, Closure $oNext)
     {
         $oResponse = $oNext($oRequest);
-        $sContent = $oResponse->original;
+        $sContent = $oResponse->getOriginalContent()->__toString();
 
-        //$sContent = preg_replace("/>[\s\n\t]+</", "><", $sContent);
-        //$sContent = preg_replace("/(?<=<\w)[\s\n\t]+(?=>)/", ' ', $sContent);
-
-        $sExpression = '%# Collapse whitespace everywhere but in blacklisted elements.
+        if (is_string($sContent)) {
+            $sExpression = '%# Collapse whitespace everywhere but in blacklisted elements.
 (?>             # Match all whitespans other than single space.
 [^\S ]\s*     # Either one [\t\r\n\f\v] and zero or more ws,
 | \s{2,}        # or two or more consecutive-any-whitespace.
@@ -33,10 +31,11 @@ class AfterMiddleware
 )             # End alternation group.
 )  # If we made it here, we are not in a blacklist tag.
 %Six';
-		$sContent = preg_replace($sExpression, " ", $sContent);
-		$sContent = preg_replace("/>[\s\n\t]+</", "><", $sContent);
+            $sContent = preg_replace($sExpression, " ", $sContent);
+            $sContent = preg_replace("/>[\s\n\t]+</", "><", $sContent);
 
-        $oResponse->setContent($sContent);
+            $oResponse->setContent($sContent);
+        }
 
         return $oResponse;
     }

@@ -3,19 +3,23 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
-use DB;
-use App\Models\PageScanner;
+use App\Models\{Page, Process, Setting};
 
 class ScanPageForProxiesCommand extends Command
 {
     protected $description = 'Scan page for proxies';
-    protected $signature = 'sp:fp {sURL}';
+    protected $signature = 'spfp {iPageID}';
 
     public function handle()
     {
         try {
-            $oPageScanner = new PageScanner($this->argument('sURL'));
-            var_dump($oPageScanner->fnScanForProxies());
+            Process::fnCreate('ScanPageForProxies');
+
+            $oPage = Page::find($this->argument('iPageID'));
+
+            if ($oPage) {
+                $oPage->fnScanProxies();
+            }
         } catch (Exception $oException) {
             $this->error($oException->getMessage());
         }

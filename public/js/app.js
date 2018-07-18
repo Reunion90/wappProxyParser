@@ -808,6 +808,7 @@ $(document).ready(function () {
 		all_proxy_list_form_delete: function all_proxy_list_form_delete(aData) {
 			fnShowNotification(aData);
 			fnUpdateHTML('all_proxy_list', '/proxies', oCallbacks['all_proxy_list_count']);
+			fnUpdateHTML('work_proxy_list', '/proxies/work', oCallbacks['work_proxy_list_count']);
 		},
 		work_proxy_list_form_delete: function work_proxy_list_form_delete(aData) {
 			fnShowNotification(aData);
