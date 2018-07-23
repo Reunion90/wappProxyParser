@@ -1,6 +1,6 @@
 {
     "name": "hightemp/wappProxyParser",
-    "description": "Proxy sites scanner",
+    "description": "Web application for scanning sites with proxies",
     "keywords": ["proxy", "scanner", "laravel"],
     "license": "MIT",
     "type": "project",
