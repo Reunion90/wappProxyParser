@@ -4,6 +4,10 @@
     "keywords": ["proxy", "scanner", "laravel"],
     "license": "MIT",
     "type": "project",
+    "authors": [{
+        "name": "Anton Panov", 
+        "email": "hightemp.unknown@gmail.com"
+    }],
     "require": {
         "php": ">=7.0.0",
         "fideloper/proxy": "~3.3",
